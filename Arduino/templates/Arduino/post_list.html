@@ -1,0 +1,77 @@
+<html>
+    <head>
+	<script src="/static/gauge.min.js"></script>
+        <title>Django Teste</title>
+    </head>
+    <body>
+<div>
+
+</div>
+{% for valor, entrada in teste %}
+<canvas id="A{{ valor }}"></canvas>
+{% endfor %}
+<script>
+var opts = {
+staticLabels: {
+  font: "14px sans-serif",  // Specifies font
+  labels: [0,100, 200,300, 400,500,600,700, 800,900, 1000],  // Print labels at these values
+  color: "#000000",  // Optional: Label text color
+  fractionDigits: 0  // Optional: Numerical precision. 0=round off.
+},
+  angle: -0.2, // The span of the gauge arc
+  lineWidth: 0.2, // The line thickness
+  radiusScale: 1, // Relative radius
+  pointer: {
+    length: 1, // // Relative to gauge radius
+    strokeWidth: 0.04, // The thickness
+    color: '#000000' // Fill color
+  },
+  limitMax: false,     // If false, the max value of the gauge will be updated if value surpass max
+  limitMin: false,     // If true, the min value of the gauge will be fixed unless you set it manually
+  colorStart: '#6FADCF',   // Colors
+  colorStop: '#8FC0DA',    // just experiment with them
+  strokeColor: '#E0E0E0',  // to see which ones work best for you
+  generateGradient: true,
+  highDpiSupport: true     // High resolution support
+};
+
+{% for valor, entrada in teste %}
+
+
+var target{{ valor }} = document.getElementById('A{{ valor }}'); // your canvas element
+var gauge{{ valor }}  = new Gauge(target{{ valor }} ).setOptions(opts); // create sexy gauge!
+gauge{{ valor }}.maxValue = 1000; // set max gauge value
+gauge{{ valor }}.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+gauge{{ valor }}.animationSpeed = 10 // set animation speed (32 is default value)
+gauge{{ valor }}.set({{entrada}}); // set actual value
+
+{% endfor %}
+
+t = setInterval(loadDoc,200);
+function loadDoc() {
+var xhttp, xmlDoc,  x, i;
+xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+  xmlDoc = this.responseXML;
+  x = xmlDoc.getElementsByTagName("A");  
+  gauge0.set(x[0].childNodes[0].nodeValue);
+  gauge1.set(x[1].childNodes[0].nodeValue);
+  gauge2.set(x[2].childNodes[0].nodeValue);
+  gauge3.set(x[3].childNodes[0].nodeValue);
+  gauge4.set(x[4].childNodes[0].nodeValue);
+  gauge5.set(x[5].childNodes[0].nodeValue);
+ 
+  }
+};
+xhttp.open("GET", "/atualiza/", true);
+xhttp.send();
+}
+
+</script>
+
+
+
+
+    </body>
+</html>
